@@ -15,10 +15,8 @@ import emu.grasscutter.scripts.data.*;
 import emu.grasscutter.scripts.service.ScriptMonsterSpawnService;
 import emu.grasscutter.scripts.service.ScriptMonsterTideService;
 import io.netty.util.concurrent.FastThreadLocalThread;
-import org.luaj.vm2.LuaError;
-import org.luaj.vm2.LuaValue;
-import org.luaj.vm2.lib.jse.CoerceJavaToLua;
 
+import javax.script.Invocable;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
@@ -195,10 +193,15 @@ public class SceneScriptManager {
 				.filter(e -> e.getEntityType() == EntityType.Avatar.getValue() && region.getMetaRegion().contains(e.getPosition()))
 				.forEach(region::addEntity);
 
+            var players = region.getScene().getPlayers();
+            int targetID = 0;
+            if(players.size() > 0)
+                targetID = players.get(0).getUid();
+
 			if (region.hasNewEntities()) {
 				callEvent(EventType.EVENT_ENTER_REGION, new ScriptArgs(region.getConfigId())
                     .setSourceEntityId(region.getId())
-                    .setTargetEntityId(region.getFirstEntityId())
+                    .setTargetEntityId(targetID)
                 );
 
 				region.resetNewEntities();
@@ -286,60 +289,45 @@ public class SceneScriptManager {
 	}
 
 	private void realCallEvent(int eventType, ScriptArgs params) {
-		try{
-			ScriptLoader.getScriptLib().setSceneScriptManager(this);
-			for (SceneTrigger trigger : this.getTriggersByEvent(eventType)) {
-				try{
-					ScriptLoader.getScriptLib().setCurrentGroup(trigger.currentGroup);
+        try {
+            for (SceneTrigger trigger : this.getTriggersByEvent(eventType)) {
+                Object ret = this.callScriptFunc(trigger.condition, trigger.currentGroup, params);
+                Grasscutter.getLogger().trace("Call Condition Trigger {}", trigger.condition);
 
-					LuaValue ret = callScriptFunc(trigger.condition, trigger.currentGroup, params);
-					Grasscutter.getLogger().trace("Call Condition Trigger {}", trigger.condition);
+                if (ret instanceof Boolean && ((Boolean)ret) == true) {
+                    // the SetGroupVariableValueByGroup in tower need the param to record the first stage time
+                    this.callScriptFunc(trigger.action, trigger.currentGroup, params);
+                    Grasscutter.getLogger().trace("Call Action Trigger {}", trigger.action);
+                }
+                //TODO some ret may not bool
 
-					if (ret.isboolean() && ret.checkboolean()) {
-						// the SetGroupVariableValueByGroup in tower need the param to record the first stage time
-						callScriptFunc(trigger.action, trigger.currentGroup, params);
-						Grasscutter.getLogger().trace("Call Action Trigger {}", trigger.action);
-					}
-					//TODO some ret may not bool
-
-				}finally {
-					ScriptLoader.getScriptLib().removeCurrentGroup();
-				}
-			}
-		}finally {
-			// make sure it is removed
-			ScriptLoader.getScriptLib().removeSceneScriptManager();
-		}
+            }
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
 	}
 
-	private LuaValue callScriptFunc(String funcName, SceneGroup group, ScriptArgs params){
-		LuaValue funcLua = null;
-		if (funcName != null && !funcName.isEmpty()) {
-			funcLua = (LuaValue) group.getBindings().get(funcName);
-		}
+    private Object callScriptFunc(String funcName, SceneGroup group, ScriptArgs params) {
+        Object ret = Boolean.TRUE;
 
-		LuaValue ret = LuaValue.TRUE;
+        if (funcName.equals("") == false) {
+            try {
+                ret = ((Invocable) ScriptLoader.getEngine()).invokeFunction(funcName, new ScriptLibContext(this, group, this.getScene().getPlayers().get(0).getUid()), params);
+            } catch (Exception e) {
+                Grasscutter.getLogger().error("Unable to execute script function: " + funcName + ". Detailed exception: " + e);
+            }
+        }
+        return ret;
+    }
 
-		if (funcLua != null) {
-			LuaValue args = LuaValue.NIL;
-
-			if (params != null) {
-				args = CoerceJavaToLua.coerce(params);
-			}
-
-			ret = safetyCall(funcName, funcLua, args);
-		}
-		return ret;
-	}
-
-	public LuaValue safetyCall(String name, LuaValue func, LuaValue args){
+	/*public LuaValue safetyCall(String name, LuaValue func, LuaValue args){
 		try{
 			return func.call(ScriptLoader.getScriptLibLua(), args);
 		}catch (LuaError error){
 			ScriptLib.logger.error("[LUA] call trigger failed {},{}",name,args,error);
 			return LuaValue.valueOf(-1);
 		}
-	}
+	}*/
 
 	public ScriptMonsterTideService getScriptMonsterTideService() {
 		return scriptMonsterTideService;

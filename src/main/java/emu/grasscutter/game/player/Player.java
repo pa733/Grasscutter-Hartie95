@@ -187,7 +187,7 @@ public class Player {
 	@Transient private FurnitureManager furnitureManager;
 	@Transient private BattlePassManager battlePassManager;
 	@Transient private CookingManager cookingManager;
-	// @Transient private 
+	// @Transient private
 	@Getter @Transient private ActivityManager activityManager;
 
 	@Transient private CollectionManager collectionManager;
@@ -468,7 +468,7 @@ public class Player {
 	public int getWorldLevel() {
 		return this.getProperty(PlayerProperty.PROP_PLAYER_WORLD_LEVEL);
 	}
-	
+
 	public boolean setWorldLevel(int level) {
 		if (this.setProperty(PlayerProperty.PROP_PLAYER_WORLD_LEVEL, level)) {
 			if (this.world.getHost() == this)  // Don't update World's WL if we are in someone else's world

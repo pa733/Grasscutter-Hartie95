@@ -46,6 +46,11 @@ public class EntityGadget extends EntityBaseGadget {
 	private Int2FloatOpenHashMap fightProp;
 	private SceneGadget metaGadget;
 
+
+	public EntityGadget(Scene scene, int gadgetId, Position pos) {
+		this(scene, gadgetId, pos, new Position());
+	}
+
 	public EntityGadget(Scene scene, int gadgetId, Position pos, Position rot) {
 		super(scene);
 		this.data = GameData.getGadgetDataMap().get(gadgetId);
@@ -53,15 +58,13 @@ public class EntityGadget extends EntityBaseGadget {
 		this.gadgetId = gadgetId;
 		this.pos = pos.clone();
 		this.rot = rot != null ? rot.clone() : new Position();
-	}
-
-	public EntityGadget(Scene scene, int gadgetId, Position pos) {
-		this(scene, gadgetId, pos, new Position());
+        this.fightProp = new Int2FloatOpenHashMap();
 	}
 
 	public EntityGadget(Scene scene, int gadgetId, Position pos, Position rot, GadgetContent content) {
 		this(scene, gadgetId, pos, rot);
 		this.content = content;
+		this.content.setGadget(this);
 	}
 
 	public GadgetData getGadgetData() {

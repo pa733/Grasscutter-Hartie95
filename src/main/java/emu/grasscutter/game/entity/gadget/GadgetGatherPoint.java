@@ -17,10 +17,10 @@ import emu.grasscutter.utils.Utils;
 public class GadgetGatherPoint extends GadgetContent {
 	private int itemId;
 	private boolean isForbidGuest;
-	
+
 	public GadgetGatherPoint(EntityGadget gadget) {
 		super(gadget);
-		
+
 		if (gadget.getSpawnEntry() != null) {
 			this.itemId = gadget.getSpawnEntry().getGatherItemId();
 		} else {
@@ -29,7 +29,11 @@ public class GadgetGatherPoint extends GadgetContent {
 			this.isForbidGuest = gatherData.isForbidGuest();
 		}
 	}
-	
+
+	public GatherData getGatherData() {
+		return GameData.getGatherDataMap().get(getGadget().getPointType());
+	}
+
 	public int getItemId() {
 		return this.itemId;
 	}
@@ -40,9 +44,9 @@ public class GadgetGatherPoint extends GadgetContent {
 
 	public boolean onInteract(Player player, GadgetInteractReq req) {
 		GameItem item = new GameItem(getItemId(), 1);
-		
+
 		player.getInventory().addItem(item, ActionReason.Gather);
-		
+
 		return true;
 	}
 
@@ -58,7 +62,7 @@ public class GadgetGatherPoint extends GadgetContent {
 	public void dropItems(Player player) {
 		Scene scene = getGadget().getScene();
 		int times = Utils.randomRange(1,2);
-		
+
         for (int i = 0 ; i < times ; i++) {
             EntityItem item = new EntityItem(
             		scene,
@@ -71,10 +75,10 @@ public class GadgetGatherPoint extends GadgetContent {
                     ),
                     1,
                     true);
-            
+
             scene.addEntity(item);
         }
-        
+
         scene.killEntity(this.getGadget(), player.getTeamManager().getCurrentAvatarEntity().getId());
         // Todo: add record
 	}

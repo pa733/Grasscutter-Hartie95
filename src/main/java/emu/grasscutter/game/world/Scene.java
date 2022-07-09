@@ -470,6 +470,9 @@ public class Scene {
 
 		for (Player player : this.getPlayers()) {
             Position position = player.getPos();
+			// Collection
+			player.getCollectionManager().onGadgetEntities(RANGE);
+
 			Collection<SpawnGroupEntry> entries = list.query(
 				new double[] {position.getX() - RANGE, position.getZ() - RANGE},
 				new double[] {position.getX() + RANGE, position.getZ() + RANGE}

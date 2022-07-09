@@ -39,9 +39,15 @@ public class HandlerCombatInvocationsNotify extends PacketHandler {
 					AttackResult attackResult = hitInfo.getAttackResult();
 					Player player = session.getPlayer();
 
+					// Handle by Collection
+					if(player.getCollectionManager().findCollection(attackResult.getDefenseId())!=null) {
+						continue;
+					}
+
 					// Handle damage
 					player.getAttackResults().add(attackResult);
 					player.getEnergyManager().handleAttackHit(hitInfo);
+
 					break;
 				case COMBAT_TYPE_ARGUMENT_ENTITY_MOVE:
 					// Handle movement

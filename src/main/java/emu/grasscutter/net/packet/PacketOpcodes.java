@@ -915,10 +915,6 @@ public class PacketOpcodes {
     public static final int MusicGameSettleRsp = 8288;
     public static final int MusicGameStartReq = 8927;
     public static final int MusicGameStartRsp = 8101;
-    public static final int MusicCustomReq = 6318;
-    public static final int MusicCustomRsp = 6309;
-    public static final int MusicGameStoreSubmitReq = 6326;
-    public static final int MusicGameStoreSubmitRsp = 6347;
     public static final int MusicGameStoreSubmitNotify = 6337;
     public static final int MusicGameStartToPlayOthersBeatmapReq = 6302;
     public static final int MusicGameStartToPlayOthersBeatmapRsp = 6313;
