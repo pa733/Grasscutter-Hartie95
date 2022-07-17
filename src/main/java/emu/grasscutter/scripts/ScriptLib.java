@@ -425,10 +425,11 @@ public class ScriptLib {
 
 		var gadget = group.gadgets.get(configId);
 		var entity = context.getSceneScriptManager().createGadget(group.id, group.block_id, gadget);
+        /* where does this come from?
         if(entity == null) {
             logger.debug("Failed to create a gadget on group: {}, block: {} configId: {} (Maybe there is a duplication.)", group.id, group.block_id, configId);
             return 0;
-        }
+        }*/
 		context.getSceneScriptManager().addEntity(entity);
 
 		return 0;
@@ -475,8 +476,8 @@ public class ScriptLib {
 				var1);
 
         for(var player : context.getSceneScriptManager().getScene().getPlayers()){
-            player.getQuestManager().triggerEvent(QuestTrigger.QUEST_COND_LUA_NOTIFY, var1);
-            player.getQuestManager().triggerEvent(QuestTrigger.QUEST_CONTENT_LUA_NOTIFY, var1);
+            player.getQuestManager().triggerEvent(QuestTrigger.QUEST_COND_LUA_NOTIFY, var1,0,0,0,0);
+            player.getQuestManager().triggerEvent(QuestTrigger.QUEST_CONTENT_LUA_NOTIFY, var1); //missing params[1], paramStr and count
         }
 
 		return 0;
