@@ -1,5 +1,6 @@
 package emu.grasscutter.scripts;
 
+import emu.grasscutter.data.excels.SceneData;
 import emu.grasscutter.game.dungeons.challenge.DungeonChallenge;
 import emu.grasscutter.game.entity.EntityGadget;
 import emu.grasscutter.game.entity.EntityMonster;
@@ -14,6 +15,7 @@ import emu.grasscutter.scripts.data.SceneRegion;
 import emu.grasscutter.server.packet.send.PacketCanUseSkillNotify;
 import emu.grasscutter.server.packet.send.PacketDungeonShowReminderNotify;
 import emu.grasscutter.server.packet.send.PacketWorktopOptionNotify;
+import emu.grasscutter.utils.Position;
 import io.netty.util.concurrent.FastThreadLocal;
 
 import org.slf4j.Logger;
@@ -467,7 +469,7 @@ public class ScriptLib {
 	public int MarkPlayerAction(ScriptLibContext context, int var2, int var3, int var4){
 		logger.debug("[LUA] Call MarkPlayerAction with {},{},{}",
 				var2,var3,var4);
-
+        //TODO
 		return 0;
 	}
 
@@ -513,9 +515,9 @@ public class ScriptLib {
         return entity.getEntityType();
     }
     //Not fully implemented. But most of the usage of this function rely on EntityType.AVATAR.
-    /*public EntityType GetEntityType(int tid) {
+    public EntityType GetEntityType(int tid) {
         return EntityType.Avatar;
-    }*/
+    }
 
     public int GetQuestState(ScriptLibContext context, int entityId, int questId){
         var player = context.getSceneScriptManager().getScene().getWorld().getHost();
@@ -530,6 +532,69 @@ public class ScriptLib {
 
     public int ShowReminder(ScriptLibContext context, int reminderId){
         context.getSceneScriptManager().getScene().broadcastPacket(new PacketDungeonShowReminderNotify(reminderId));
+        return 0;
+    }
+
+    public int ShowReminderRadius(ScriptLibContext context, int reminderID, Position location, int var4){
+        logger.warn("[LUA] Call ShowReminderRadius {} {} {}", reminderID, location,var4);
+        //TODO
+        // var4 == distance?
+        // e.g. scene3_group133002098.lua action_EVENT_ENTER_REGION_98007 line 247
+        return 0;
+    }
+    public int BeginCameraSceneLook(ScriptLibContext context, int var2){
+        logger.warn("[LUA] Call BeginCameraSceneLook {} {} {} {}", var2);
+        //TODO
+        // var2 == cameraSceneProperties
+        // cameraSceneProperties:
+        // look_pos: Position
+        // is_allow_input: bool
+        // duration: float
+        // is_force: bool
+        // is_broadcast: bool
+        // is_recover_keep_current: bool
+        // delay: int
+        // is_set_follow_pos: bool
+        // follow_pos: Position
+        // is_force_walk: bool
+        // is_change_play_mode: bool
+        // is_set_screen_XY: bool
+        // screen_x int
+        // screen_y int
+        // e.g. scene3_group133002098.lua action_EVENT_ENTER_REGION_98007 line 247
+        return 0;
+    }
+    public int SetPlatformRouteId(ScriptLibContext context, int var2, int routeId){
+        logger.warn("[LUA] Call SetPlatformRouteId {} {}", var2, routeId);
+        //TODO
+        // var2 == seelie ID?
+        // e.g. scene3_group133003381.lua action_EVENT_ENTER_REGION_381007 line 387
+        // or scene3_group133001159.lua action_EVENT_ENTER_REGION_159007 line 387
+        return 0;
+    }
+    public int CreateGroupTimerEvent(ScriptLibContext context, int unk, String unk2, int unk3){
+        logger.warn("[LUA] Call CreateGroupTimerEvent {} {} {}", unk, unk2, unk3);
+        //TODO
+        // e.g. scene3_group133003002.lua action_EVENT_ANY_MONSTER_LIVE_529 line 177
+        // maybe groupID, timer type/abilityTimer?, time in sec?
+        return 0;
+    }
+    public int GetDummyPoint(SceneData sceneData, int unk2, int unk3){
+        logger.warn("[LUA] Call GetDummyPoint {} {} {}", sceneData, unk2, unk3);
+        //TODO
+        // e.g. Q358ClientConfig.lua action_EVENT_ANY_MONSTER_LIVE_529 line 177
+        // maybe groupID, timer type/abilityTimer?, time in sec?
+        return 0;
+    }
+    public int SetGroupReplaceable(ScriptLibContext context, int unk, boolean unk2){
+        logger.warn("[LUA] Call SetGroupReplaceable {} {}", unk, unk2);
+        //TODO
+        // e.g. scene3_group133003136.lua action_EVENT_ANY_MONSTER_DIE_511 line 445
+        // maybe groupID, timer type/abilityTimer?, time in sec?
+        return 0;
+    }
+    public int PrintLog(ScriptLibContext context, String message){
+        logger.info("[LUA] PrintLog: {}", message);
         return 0;
     }
 
