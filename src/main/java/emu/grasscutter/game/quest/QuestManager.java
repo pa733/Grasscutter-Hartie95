@@ -1,10 +1,11 @@
 package emu.grasscutter.game.quest;
 
+import java.io.Reader;
 import java.util.*;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
-
+import com.google.gson.reflect.TypeToken;
 import emu.grasscutter.Grasscutter;
+import emu.grasscutter.data.DataLoader;
 import emu.grasscutter.data.GameData;
 import emu.grasscutter.data.binout.MainQuestData;
 import emu.grasscutter.data.excels.QuestData;
@@ -22,6 +23,33 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 
 public class QuestManager extends BasePlayerManager {
     private final Int2ObjectMap<GameMainQuest> quests;
+    private static final Int2ObjectMap<QuestEncryptionKey> questsKeys;
+
+    static {
+        questsKeys = new Int2ObjectOpenHashMap<>();
+        loadQuestKeys();
+    }
+
+    public static long getQuestKey(int mainQuestId){
+        QuestEncryptionKey questEncryptionKey = questsKeys.get(mainQuestId);
+        return questEncryptionKey != null ? questEncryptionKey.getEncryptionKey() : 0L;
+    }
+
+    private static void loadQuestKeys() {
+        try (Reader reader = DataLoader.loadReader("QuestEncryptionKeys.json")) {
+            List<QuestEncryptionKey> keys = Grasscutter.getGsonFactory().fromJson(
+                reader,
+                TypeToken.getParameterized(List.class, QuestEncryptionKey.class).getType());
+
+            keys.forEach(key -> {
+                questsKeys.put(key.getMainQuestId(), key);
+            });
+            Grasscutter.getLogger().info("loaded {} quest keys.", questsKeys.size());
+        } catch (Exception e) {
+            Grasscutter.getLogger().error("Unable to load quest keys.", e);
+        }
+
+    }
 
     public QuestManager(Player player) {
         super(player);
