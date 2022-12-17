@@ -7,10 +7,8 @@ import emu.grasscutter.Grasscutter.ServerDebugMode;
 import emu.grasscutter.Grasscutter.ServerRunMode;
 import emu.grasscutter.utils.JsonUtils;
 
-import java.util.Set;
+import java.util.*;
 import java.lang.reflect.Field;
-import java.util.Arrays;
-import java.util.Locale;
 
 import static emu.grasscutter.Grasscutter.config;
 
@@ -296,17 +294,20 @@ public class ConfigContainer {
 
         public Region(
                 String name, String title,
-                String address, int port
+                String address, int port,
+                String[] GameVersions
         ) {
             this.Name = name;
             this.Title = title;
             this.Ip = address;
-            this.Port  = port;
+            this.Port = port;
+            this.Versions = GameVersions;
         }
 
         public String Name = "os_usa";
         public String Title = "Grasscutter";
         public String Ip = "127.0.0.1";
         public int Port = 22102;
+        public String[] Versions = {"*"};
     }
 }
