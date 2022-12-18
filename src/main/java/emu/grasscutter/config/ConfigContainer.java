@@ -30,7 +30,8 @@ public class ConfigContainer {
                 Grasscutter.getLogger().info("Updating legacy ..");
                 Grasscutter.saveConfig(null);
             }
-        } catch (Exception ignored) { }
+        } catch (Exception ignored) {
+        }
 
         var existing = config.version;
         var latest = version();
@@ -48,7 +49,8 @@ public class ConfigContainer {
             } catch (Exception exception) {
                 Grasscutter.getLogger().error("Failed to update a configuration field.", exception);
             }
-        }); updated.version = version();
+        });
+        updated.version = version();
 
         try { // Save configuration & reload.
             Grasscutter.saveConfig(updated);
@@ -165,6 +167,8 @@ public class ConfigContainer {
     public static class Dispatch {
         public Region[] regions = {};
 
+        public Resource[] resources = {};
+
         public String defaultName = "Grasscutter";
 
         /* Controls whether http requests should be logged in console or not */
@@ -172,7 +176,7 @@ public class ConfigContainer {
     }
 
     /* Debug options container, used when jar launch argument is -debug | -debugall and override default values
-    *  (see StartupArguments.enableDebug) */
+     *  (see StartupArguments.enableDebug) */
     public static class DebugMode {
         /* Log level of the main server code (works only with -debug arg) */
         public Level serverLoggerLevel = Level.DEBUG;
@@ -258,16 +262,16 @@ public class ConfigContainer {
         public static class Mail {
             public String title = "Welcome to Grasscutter!";
             public String content = """
-                    Hi there!\r
-                    First of all, welcome to Grasscutter. If you have any issues, please let us know so that Lawnmower can help you! \r
-                    \r
-                    Check out our:\r
-                    <type="browser" text="Discord" href="https://discord.gg/T5vZU6UyeG"/>
-                    """;
+                Hi there!\r
+                First of all, welcome to Grasscutter. If you have any issues, please let us know so that Lawnmower can help you! \r
+                \r
+                Check out our:\r
+                <type="browser" text="Discord" href="https://discord.gg/T5vZU6UyeG"/>
+                """;
             public String sender = "Lawnmower";
             public emu.grasscutter.game.mail.Mail.MailItem[] items = {
-                    new emu.grasscutter.game.mail.Mail.MailItem(13509, 1, 1),
-                    new emu.grasscutter.game.mail.Mail.MailItem(201, 99999, 1)
+                new emu.grasscutter.game.mail.Mail.MailItem(13509, 1, 1),
+                new emu.grasscutter.game.mail.Mail.MailItem(201, 99999, 1)
             };
         }
     }
@@ -290,24 +294,52 @@ public class ConfigContainer {
     /* Objects. */
 
     public static class Region {
-        public Region() { }
-
-        public Region(
-                String name, String title,
-                String address, int port,
-                String[] GameVersions
-        ) {
-            this.Name = name;
-            this.Title = title;
-            this.Ip = address;
-            this.Port = port;
-            this.Versions = GameVersions;
+        public Region() {
         }
 
-        public String Name = "os_usa";
-        public String Title = "Grasscutter";
-        public String Ip = "127.0.0.1";
-        public int Port = 22102;
-        public String[] Versions = {"*"};
+        public Region(
+            String name, String title,
+            String address, int port,
+            boolean isEnableDownloadResource,String[] versions
+        ) {
+            this.name = name;
+            this.title = title;
+            this.ip = address;
+            this.port = port;
+            this.isEnableDownloadResource = isEnableDownloadResource;
+            this.versions = versions;
+        }
+
+        public String name = "os_usa";
+        public String title = "Grasscutter";
+        public String ip = "127.0.0.1";
+        public int port = 22102;
+        public boolean isEnableDownloadResource = false;
+        public String[] versions = {"*"};
+    }
+
+    public static class Resource {
+        public String version = "";
+
+        public String resourceUrl = "";
+        public String dataUrl = "";
+        public String resourceUrlBak = "";
+        public int clientDataVersion = 0;
+        public int clientSilenceDataVersion = 0;
+        public String clientDataMd5 = "";
+        public String clientSilenceDataMd5 = "";
+        public ResVersionConfig resVersionConfig = new ResVersionConfig();
+        public String clientVersionSuffix = "";
+        public String clientSilenceVersionSuffix = "";
+        public String nextResourceUrl = "";
+        public ResVersionConfig nextResVersionConfig = new ResVersionConfig();
+    }
+
+    public static class ResVersionConfig {
+        public int version = 0;
+        public String md5 = "";
+        public String releaseTotalSize = "";
+        public String versionSuffix = "";
+        public String branch = "";
     }
 }

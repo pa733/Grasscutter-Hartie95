@@ -49,7 +49,7 @@ public class HandlerPlayerLoginReq extends PacketHandler {
         }
 
         // Final packet to tell client logging in is done
-        session.send(new PacketPlayerLoginRsp(session));
+        session.send(new PacketPlayerLoginRsp(req.getChecksumClientVersion()));
         session.send(new PacketTakeAchievementRewardReq(session));
     }
 
