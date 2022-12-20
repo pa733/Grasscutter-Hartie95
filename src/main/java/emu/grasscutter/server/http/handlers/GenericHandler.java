@@ -1,14 +1,9 @@
 package emu.grasscutter.server.http.handlers;
 
-import static emu.grasscutter.config.Configuration.ACCOUNT;
-
-import emu.grasscutter.GameConstants;
-import emu.grasscutter.Grasscutter;
 import emu.grasscutter.server.http.objects.HttpJsonResponse;
 import emu.grasscutter.server.http.Router;
 import emu.grasscutter.server.http.objects.WebStaticVersionResponse;
 import io.javalin.Javalin;
-import io.javalin.http.Context;
 
 /**
  * Handles all generic, hard-coded responses.
@@ -42,15 +37,5 @@ public final class GenericHandler implements Router {
 
         // webstatic-sea.hoyoverse.com
         javalin.get("/admin/mi18n/plat_oversea/*", new WebStaticVersionResponse());
-
-        javalin.get("/status/server", GenericHandler::serverStatus);
-    }
-
-    private static void serverStatus(Context ctx) {
-        int playerCount = Grasscutter.getGameServer().getPlayers().size();
-        int maxPlayer = ACCOUNT.maxPlayer;
-        String version = GameConstants.VERSION;
-
-        ctx.result("{\"retcode\":0,\"status\":{\"playerCount\":" + playerCount + ",\"maxPlayer\":" + maxPlayer + ",\"version\":\"" + version + "\"}}");
     }
 }

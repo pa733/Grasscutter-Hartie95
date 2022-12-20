@@ -16,13 +16,10 @@ import emu.grasscutter.plugin.api.ServerHook;
 import emu.grasscutter.scripts.ScriptLoader;
 import emu.grasscutter.server.game.GameServer;
 import emu.grasscutter.server.http.HttpServer;
+import emu.grasscutter.server.http.dispatch.SDKHandler;
 import emu.grasscutter.server.http.dispatch.DispatchHandler;
-import emu.grasscutter.server.http.dispatch.RegionHandler;
 import emu.grasscutter.server.http.documentation.DocumentationServerHandler;
-import emu.grasscutter.server.http.handlers.AnnouncementsHandler;
-import emu.grasscutter.server.http.handlers.GachaHandler;
-import emu.grasscutter.server.http.handlers.GenericHandler;
-import emu.grasscutter.server.http.handlers.LogHandler;
+import emu.grasscutter.server.http.handlers.*;
 import emu.grasscutter.tools.Tools;
 import emu.grasscutter.utils.Crypto;
 import emu.grasscutter.utils.JsonUtils;
@@ -129,25 +126,38 @@ public final class Grasscutter {
 
         // Create plugin manager instance.
         pluginManager = new PluginManager();
+
         // Add HTTP routes after loading plugins.
         httpServer.addRouter(HttpServer.UnhandledRequestRouter.class);
         httpServer.addRouter(HttpServer.DefaultRequestRouter.class);
-        httpServer.addRouter(RegionHandler.class);
-        httpServer.addRouter(LogHandler.class);
-        httpServer.addRouter(GenericHandler.class);
-        httpServer.addRouter(AnnouncementsHandler.class);
+        httpServer.addRouter(StatusHandler.class);
         httpServer.addRouter(DispatchHandler.class);
-        httpServer.addRouter(GachaHandler.class);
-        httpServer.addRouter(DocumentationServerHandler.class);
 
         // Start servers.
         var runMode = Grasscutter.getRunMode();
         if (runMode == ServerRunMode.HYBRID) {
+            httpServer.addRouter(AnnouncementsHandler.class);
+            httpServer.addRouter(SDKHandler.class);
+            httpServer.addRouter(DocumentationServerHandler.class);
+            httpServer.addRouter(GachaHandler.class);
+            httpServer.addRouter(GenericHandler.class);
+            httpServer.addRouter(LogHandler.class);
+
             httpServer.start();
             gameServer.start();
         } else if (runMode == ServerRunMode.DISPATCH_ONLY) {
+            httpServer.addRouter(SDKHandler.class);
+            httpServer.addRouter(GenericHandler.class);
+            httpServer.addRouter(DispatchHandler.class);
+            httpServer.addRouter(LogHandler.class);
+
             httpServer.start();
         } else if (runMode == ServerRunMode.GAME_ONLY) {
+            httpServer.addRouter(AnnouncementsHandler.class);
+            httpServer.addRouter(DocumentationServerHandler.class);
+            httpServer.addRouter(GachaHandler.class);
+
+            httpServer.start();
             gameServer.start();
         } else {
             getLogger().error(translate("messages.status.run_mode_error", runMode));

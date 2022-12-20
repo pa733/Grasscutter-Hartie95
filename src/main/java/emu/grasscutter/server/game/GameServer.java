@@ -81,17 +81,6 @@ public final class GameServer extends KcpServer {
     }
 
     public GameServer(InetSocketAddress address) {
-        ChannelConfig channelConfig = new ChannelConfig();
-        channelConfig.nodelay(true, GAME_INFO.kcpInterval, 2, true);
-        channelConfig.setMtu(1400);
-        channelConfig.setSndwnd(256);
-        channelConfig.setRcvwnd(256);
-        channelConfig.setTimeoutMillis(30 * 1000);//30s
-        channelConfig.setUseConvChannel(true);
-        channelConfig.setAckNoDelay(false);
-
-        this.init(GameSessionManager.getListener(),channelConfig,address);
-
         DungeonChallenge.initialize();
         EnergyManager.initialize();
         StaminaManager.initialize();
@@ -242,6 +231,18 @@ public final class GameServer extends KcpServer {
     }
 
     public void start() {
+        // Start KCP server.
+        ChannelConfig channelConfig = new ChannelConfig();
+        channelConfig.nodelay(true, GAME_INFO.kcpInterval, 2, true);
+        channelConfig.setMtu(1400);
+        channelConfig.setSndwnd(256);
+        channelConfig.setRcvwnd(256);
+        channelConfig.setTimeoutMillis(30 * 1000);//30s
+        channelConfig.setUseConvChannel(true);
+        channelConfig.setAckNoDelay(false);
+
+        this.init(GameSessionManager.getListener(),channelConfig,address);
+
         // Schedule game loop.
         Timer gameLoop = new Timer();
         gameLoop.scheduleAtFixedRate(new TimerTask() {

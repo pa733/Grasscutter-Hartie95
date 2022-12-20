@@ -1,23 +1,10 @@
 package emu.grasscutter.server.packet.send;
 
-import com.google.protobuf.ByteString;
-import emu.grasscutter.Grasscutter;
-import emu.grasscutter.Grasscutter.ServerRunMode;
 import emu.grasscutter.net.packet.BasePacket;
 import emu.grasscutter.net.packet.PacketOpcodes;
 import emu.grasscutter.net.proto.PlayerLoginRspOuterClass.PlayerLoginRsp;
 import emu.grasscutter.net.proto.QueryCurrRegionHttpRspOuterClass;
-import emu.grasscutter.net.proto.RegionInfoOuterClass.RegionInfo;
-import emu.grasscutter.server.game.GameSession;
-import emu.grasscutter.server.http.dispatch.RegionHandler;
-import emu.grasscutter.utils.Crypto;
-import emu.grasscutter.utils.FileUtils;
-
-import static emu.grasscutter.config.Configuration.*;
-
-import java.io.File;
-import java.util.Base64;
-import java.util.Objects;
+import emu.grasscutter.server.http.dispatch.DispatchHandler;
 
 public class PacketPlayerLoginRsp extends BasePacket {
 
@@ -28,7 +15,7 @@ public class PacketPlayerLoginRsp extends BasePacket {
 
         this.setUseDispatchKey(true);
 
-        var info = RegionHandler.getCurrentRegion(gameVersion).getRegionInfo();
+        var info = DispatchHandler.getCurrentRegion(gameVersion).getRegionInfo();
 
         PlayerLoginRsp p = PlayerLoginRsp.newBuilder()
                 .setIsUseAbilityHash(true) // true

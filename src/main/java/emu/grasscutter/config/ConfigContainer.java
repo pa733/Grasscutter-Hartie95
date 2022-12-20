@@ -298,12 +298,9 @@ public class ConfigContainer {
         }
 
         public Region(
-            String name, String title,
             String address, int port,
             boolean isEnableDownloadResource,String[] versions
         ) {
-            this.name = name;
-            this.title = title;
             this.ip = address;
             this.port = port;
             this.isEnableDownloadResource = isEnableDownloadResource;
